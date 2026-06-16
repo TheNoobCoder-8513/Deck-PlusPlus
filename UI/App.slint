@@ -1,0 +1,67 @@
+import { Theme as t, Theme } from "Theme.slint";
+import { Navbar } from "Widgets/Navbar.slint";
+import { Stack } from "Widgets/Stack.slint";
+import { Profile-data } from "Datatypes.slint";
+
+export component App inherits Window {
+    // This is populated from Rust via manage.rs
+    in property <[Profile-data]> data;
+
+    // The index of the profile currently being viewed/edited in the UI
+    in-out property <int> selected-index: 0;
+
+    // The index of the physical key currently being pressed (from ESP32)
+    in-out property <int> active: 0;
+
+    // Callback parameters: (profile_index, button_index, new_action_name)
+    callback modify-map(string, string, string);
+
+    callback profile_changed(int);
+
+    title: "Deck++";
+    preferred-height: 600px;
+    preferred-width: 800px;
+    min-height: self.preferred-height;
+    min-width: self.preferred-width;
+
+    Image {
+        height: 100%;
+        width: 100%;
+        source: @image-url("Assets/Abstract-Fly.png");
+        image-fit: cover;
+    }
+
+    HorizontalLayout {
+        padding: t.gap;
+        spacing: t.gap;
+
+        nav := Navbar {
+            width: 200px;
+            list: root.data;
+            
+            // Highlight the correct row in the Navbar
+            selected: root.data[root.selected-index];
+
+            background: t.alt-bg;
+
+            // IMPORTANT: Ensure your Navbar.slint has this callback!
+            clicked(idx) => {
+                root.selected-index = idx;
+                profile_changed(idx);
+            }
+        }
+
+        Stack {
+            // By binding to data[index], Slint refreshes this component 
+            // automatically when Rust calls 'ui.set_data()'
+            data: root.data[root.selected-index];
+            background: t.bg;
+            active <=> root.active;
+
+            modify-mapping(row, grp, name) => {
+                // We pass the selected-index so Rust knows which profile to update
+                root.modify-map(root.selected-index, row, name);
+            }
+        }
+    }
+}

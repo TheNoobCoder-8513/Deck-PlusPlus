@@ -1,0 +1,112 @@
+import { Theme as t } from "Theme.slint";
+
+
+export component Confpanel inherits Rectangle {
+    in-out property <bool> unlocked: false;
+    in-out property <bool> test-mode: true;
+
+    callback rename-clicked();
+
+    HorizontalLayout {
+        alignment: start;
+        spacing: t.gap;
+
+        test := Image {
+            source: @image-url("Assets/Icons/Test.png");
+            height: 24px;
+            width: self.height;
+
+            test-touch := TouchArea {
+                clicked => {
+                    test-mode = !test-mode;
+                    unlocked = false;
+                }
+            }
+
+            colorize: {
+                if test-touch.has-hover || test-touch.pressed {
+                    green
+                } else {
+                    transparent
+                }
+            }
+            animate opacity { duration: 100ms; }
+        }
+
+        lock := Image {
+            height: 24px;
+            width: self.height;
+            source: {
+                if !unlocked {
+                    @image-url("Assets/Icons/Lock.png")
+                } else {
+                    @image-url("Assets/Icons/Unlock.png")
+                }
+            }
+            lock-touch := TouchArea {
+                clicked => {
+                    if (!test-mode) {
+                        unlocked = !unlocked;
+                    }
+                }
+            }
+
+            colorize: {
+                if lock-touch.has-hover || unlocked {
+                    t.fg
+                } else {
+                    t.fg.darker(1.0)
+                }
+            }
+
+            animate colorize { duration: 50ms; }
+        }
+
+        Rectangle {
+            width: 1px;
+            background: t.bor-c;
+        }
+
+        rename := Image {
+            source: @image-url("Assets/Icons/Rename.png");
+            height: 24px;
+            width: self.height;
+
+            rename-touch := TouchArea {
+                clicked => {
+                    if rename.opacity == 1 {
+                        rename-clicked();
+                    }
+                }
+            }
+
+            colorize: {
+                if rename-touch.has-hover {
+                    t.fg
+                } else {
+                    t.fg.darker(1.0)
+                }
+            }
+            opacity: unlocked ? 1 : 0;
+            animate opacity { duration: 100ms; }
+        }
+
+        delete := Image {
+            source: @image-url("Assets/Icons/Delete.png");
+            height: 24px;
+            width: self.height;
+
+            delete-touch := TouchArea { }
+
+            colorize: {
+                if delete-touch.has-hover {
+                    red
+                } else {
+                    red.darker(1.0)
+                }
+            }
+            opacity: unlocked ? 1 : 0;
+            animate opacity { duration: 100ms; }
+        }
+    }
+}

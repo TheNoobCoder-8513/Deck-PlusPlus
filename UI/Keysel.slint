@@ -1,0 +1,325 @@
+import { Theme as t } from "Theme.slint";
+import { CheckButton } from "Widgets/Checkbutton.slint";
+import { Card } from "Widgets/Card.slint";
+import { Button } from "Widgets/Button.slint";
+import { LineEdit } from "std-widgets.slint";
+
+
+component SButton inherits Rectangle {
+    in property <string> text: "Button";
+    in property <color> bgcolor: #00d9ff;
+
+    callback clicked();
+
+    tc := TouchArea {
+        clicked => {
+            root.clicked();
+        }
+    }
+
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: bgcolor;
+    background: tc.has-hover ? bgcolor.with-alpha(0.5) : bgcolor.with-alpha(0.2);
+
+    VerticalLayout {
+        padding: t.gap;
+        padding-left: t.gap * 2;
+        padding-right: t.gap * 2;
+        Rectangle {
+            Text {
+                text: text;
+            }
+        }
+    }
+}
+
+export component Keysel inherits Rectangle {
+    private property <string> active-group: "Keyboard Keys";
+
+    in-out property <string> selected;
+
+    callback choosen(string, string);
+    callback canceled();
+    callback url(string);
+
+    background: t.bg.with-alpha(1.0);
+    border-width: 1px;
+    border-radius: 10px;
+    border-color: {
+        if selected.is-empty {
+            red
+        } else {
+            greenyellow
+        }
+    }
+
+    VerticalLayout {
+        spacing: 5px;
+        padding: 5px;
+
+        HorizontalLayout {
+            alignment: space-around;
+            private property <[string]> groups: ["Keyboard Keys", "Media Control", "Action Control"];
+
+            HorizontalLayout {
+                spacing: t.gap * 2;
+                for elem[i] in groups: Rectangle {
+                    background: {
+                        if tc.has-hover {
+                            #0091ff77
+                        } else {
+                            #232323
+                        }
+                    };
+
+                    border-width: 1px;
+                    border-radius: 8px;
+                    border-color: {
+                        if tc.has-hover {
+                            #0091ff
+                        } else {
+                            #383838
+                        }
+                    };
+
+                    tc := TouchArea {
+                        clicked => {
+                            active-group = elem;
+                        }
+                    }
+
+                    HorizontalLayout {
+                        padding: 10px;
+                        Text {
+                            text: elem;
+                        }
+                    }
+                }
+            }
+        }
+
+        if active-group == "Keyboard Keys": keys-panel := Rectangle {
+            Flickable {
+                VerticalLayout {
+                    padding: 5px;
+                    spacing: 5px;
+
+                    Card {
+                        label: "Alphabetic Keys";
+                        HorizontalLayout {
+
+                            VerticalLayout {
+                                for elem[i] in [
+                                    "Letter A",
+                                    "Letter B",
+                                    "Letter C",
+                                    "Letter D",
+                                    "Letter E",
+                                    "Letter F",
+                                    "Letter G",
+                                    "Letter H",
+                                    "Letter I",
+                                    "Letter J",
+                                ]: CheckButton {
+                                    text: elem;
+                                    enabled: selected == elem;
+                                    clicked => {
+                                        selected = elem;
+                                    }
+                                }
+                            }
+
+                            VerticalLayout {
+                                for elem[i] in [
+                                    "Letter K",
+                                    "Letter L",
+                                    "Letter M",
+                                    "Letter N",
+                                    "Letter O",
+                                    "Letter P",
+                                    "Letter Q",
+                                    "Letter R",
+                                    "Letter S",
+                                    "Letter T",
+                                ]: CheckButton {
+                                    text: elem;
+                                    enabled: selected == elem;
+                                    clicked => {
+                                        selected = elem;
+                                    }
+                                }
+                            }
+
+                            VerticalLayout {
+                                for elem[i] in ["Letter U", "Letter V", "Letter W", "Letter X", "Letter Y", "Letter Z"]: CheckButton {
+                                    text: elem;
+                                    enabled: selected == elem;
+                                    clicked => {
+                                        selected = elem;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Card {
+                        label: "Numeric Keys";
+                        HorizontalLayout {
+                            VerticalLayout {
+                                for elem[i] in [
+                                    "Num 0",
+                                    "Num 1",
+                                    "Num 2",
+                                    "Num 3",
+                                    "Num 4",
+                                ]: CheckButton {
+                                    text: elem;
+                                    enabled: selected == elem;
+                                    clicked => {
+                                        selected = elem;
+                                    }
+                                }
+                            }
+
+                            VerticalLayout {
+                                for elem[i] in [
+                                    "Num 5",
+                                    "Num 6",
+                                    "Num 7",
+                                    "Num 8",
+                                    "Num 9",
+                                ]: CheckButton {
+                                    text: elem;
+                                    enabled: selected == elem;
+                                    clicked => {
+                                        selected = elem;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Card {
+                        label: "Navigation Keys";
+                        VerticalLayout {
+                            for elem[i] in [
+                                "Up Arrow",
+                                "Down Arrow",
+                                "Left Arrow",
+                                "Right Arrow",
+                            ]: CheckButton {
+                                text: elem;
+                                enabled: selected == elem;
+                                clicked => {
+                                    selected = elem;
+                                }
+                            }
+                        }
+                    }
+
+                    Card {
+                        label: "Special Keys";
+                        VerticalLayout {
+                            for elem[i] in ["Tab Key", "Back Key", "Enter", "Unset"]: CheckButton {
+                                text: elem;
+                                enabled: selected == elem;
+                                clicked => {
+                                    selected = elem;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if active-group == "Media Control": media-panel := Rectangle {
+            Flickable {
+                VerticalLayout {
+                    padding: 5px;
+                    spacing: 5px;
+                    Card {
+                        label: "Media Playback Keys";
+                        VerticalLayout {
+                            for elem[i] in ["Play", "Pause", "Seek Forward", "Seek Backward"]: CheckButton {
+                                text: elem;
+                                enabled: selected == elem;
+                                clicked => {
+                                    selected = elem;
+                                }
+                            }
+                        }
+                    }
+
+                    Card {
+                        label: "Media Keys";
+                        VerticalLayout {
+                            for elem[i] in ["Screenshot", "Screen Record", "Camera"]: CheckButton {
+                                text: elem;
+                                enabled: selected == elem;
+                                clicked => {
+                                    selected = elem;
+                                }
+                            }
+                        }
+                    }
+
+                    Card {
+                        label: "Volume Control Keys";
+                        VerticalLayout {
+                            for elem[i] in ["Volume +", "Volume -", "Volume Mute", "Mic Mute"]: CheckButton {
+                                text: elem;
+                                enabled: selected == elem;
+                                clicked => {
+                                    selected = elem;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if active-group == "Action Control": action-panel := Rectangle {
+            VerticalLayout {
+                Card {
+                    label: "URLs";
+                    for elem[i] in ["Github", "Leetcode", "Youtube", "Reddit", "Slint", "BMW"]: CheckButton {
+                        text: elem;
+                        enabled: selected == elem;
+                        clicked => {
+                            selected = elem;
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            height: 1px;
+            background: t.bor-c;
+        }
+
+        HorizontalLayout {
+            alignment: space-between;
+            spacing: 10px;
+
+            SButton {
+                bgcolor: red;
+                text: "Cancel";
+                clicked => {
+                    canceled();
+                }
+            }
+
+            SButton {
+                text: "Select";
+                clicked => {
+                    if !selected.is-empty {
+
+                        choosen(active-group, selected)
+                    }
+                }
+            }
+        }
+    }
+}

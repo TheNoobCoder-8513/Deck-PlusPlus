@@ -1,0 +1,47 @@
+export component CheckButton inherits Rectangle {
+
+    in property <string> text:"Check button";
+    in property <bool> enabled: false;
+
+    callback clicked();
+
+    tc := TouchArea {
+        clicked => {
+            root.clicked();
+        }
+    }
+
+    HorizontalLayout {
+        spacing: 10px;
+        padding: 5px;
+        alignment: start;
+
+        Rectangle {
+            height: 20px;
+            width: self.height;
+            border-radius: 5px;
+            border-width: 1px;
+
+            border-color: {
+                if tc.has-hover {
+                    #ffffff
+                } else {
+                    #434343
+                }
+            }
+
+            background: {
+                if enabled {
+                    forestgreen
+                } else {
+                    transparent
+                }
+            }
+        }
+
+        Text {
+            text: root.text;
+            vertical-alignment: center;
+        }
+    }
+}

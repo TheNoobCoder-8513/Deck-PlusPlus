@@ -1,0 +1,52 @@
+import { Theme as t } from "../Theme.slint";
+
+export component Button inherits Rectangle {
+    in property <string> text: "Button";
+    in property <color> text-color: t.fg;
+
+    in property <int> val: 0;
+    in-out property <bool> selected: false;
+    in property <length> pad: t.gap * 2;
+
+    callback clicked();
+    out property <bool> hovered <=> touch.has-hover;
+
+    border-width: 1px;
+    border-radius: t.bor-r;
+
+    touch := TouchArea {
+        clicked => {
+            root.clicked();
+        }
+    }
+
+    background: transparent;
+
+    states [
+        choosen when touch.has-hover && touch.pressed: {
+            background: #0033ff43;
+        }
+        hovered when touch.has-hover && !selected: {
+            background: #00ff1a5f;
+            border-color: #00ff1a;
+        }
+        selected when root.selected: {
+            background: #0033ff43;
+            border-color: #0059ff;
+        }
+    ]
+
+    HorizontalLayout {
+        padding: pad;
+        Text {
+
+            text: text;
+            font-size: 16px;
+            color: text-color;
+            horizontal-alignment: left;
+            vertical-alignment: center;
+        }
+
+        @children
+    }
+}

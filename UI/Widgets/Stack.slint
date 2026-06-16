@@ -1,0 +1,274 @@
+import { Theme as t } from "../Theme.slint";
+import { Profile-data } from "../Datatypes.slint";
+import { Confpanel } from "../Confpanel.slint";
+import { LineEdit, Button } from "std-widgets.slint";
+import { Keysel } from "../Keysel.slint";
+
+export component Stack inherits Rectangle {
+    in property <Profile-data> data;
+    in-out property <int> active: 0;
+
+    private property <bool> conf-panel: false;
+    private property <bool> test-mode: false;
+
+    callback modify-mapping(string, string, string);
+    callback url(string);
+
+    timer := Timer {
+        interval: 2s;
+        triggered => {
+            active = -1;
+            self.stop();
+        }
+    }
+
+    changed data => {
+        conf-panel = false;
+        test-mode = false;
+        active = -1;
+    }
+
+    changed active => {
+        if active >= 0 {
+            timer.start();
+        }
+    }
+
+    border-radius: t.bor-r;
+    border-color: t.bor-c;
+    border-width: 1px;
+
+    VerticalLayout {
+        padding: t.gap;
+        spacing: t.gap;
+        alignment: start;
+
+        VerticalLayout {
+            padding: t.gap * 2;
+            spacing: t.gap;
+            alignment: start;
+
+            Text {
+                text: data.info.name;
+                font-size: 32px;
+                horizontal-alignment: right;
+            }
+
+            Text {
+                text: "Created on: " + data.info.cre-date;
+                font-size: 14px;
+                horizontal-alignment: right;
+            }
+
+            Text {
+                text: "Last modified on: " + data.info.mod-date;
+                font-size: 14px;
+                horizontal-alignment: right;
+            }
+        }
+
+        Rectangle {
+            height: 1px;
+            background: t.bor-c;
+        }
+
+        HorizontalLayout {
+            padding-right: t.gap * 3;
+            padding-left: t.gap;
+
+            rename-modal := PopupWindow {
+                width: 300px;
+                height: 150px;
+                close-policy: close-on-click-outside;
+
+                Rectangle {
+                    background: #000000;
+                    border-radius: t.bor-r;
+                    border-width: 2px;
+                    border-color: t.accent;
+
+                    VerticalLayout {
+                        padding: 15px;
+                        spacing: 10px;
+                        Text {
+                            text: "Rename Profile";
+                            color: t.fg;
+                            font-size: 18px;
+                        }
+
+                        input := LineEdit {
+                            text: data.info.name;
+                            placeholder-text: "Enter new name...";
+                        }
+
+                        HorizontalLayout {
+                            spacing: 10px;
+                            alignment: end;
+                            Button {
+                                text: "Cancel";
+                                clicked => {
+                                    rename-modal.close();
+                                }
+                            }
+
+                            Button {
+                                text: "Save";
+                                primary: true;
+                                clicked => {
+                                    rename-modal.close();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Confpanel {
+                unlocked <=> conf-panel;
+                test-mode <=> test-mode;
+
+                rename-clicked => {
+                    rename-modal.show();
+                }
+            }
+
+            Text {
+                text: "Mapping";
+                font-size: 20px;
+                color: t.accent;
+                horizontal-alignment: right;
+            }
+        }
+
+        Rectangle {
+            height: 1px;
+            background: t.bor-c;
+        }
+
+        private property <int> selected-row;
+
+        selector := PopupWindow {
+            x: (root.width - root.absolute-position.x / 2 - self.width) / 2;
+            y: (root.height - self.height) / 2;
+            height: 400px;
+            width: 500px;
+            close-policy: close-on-click-outside;
+
+            Keysel {
+
+                choosen(group, button) => {
+                    modify-mapping(selected-row, group, button);
+                    selector.close();
+                }
+                canceled => {
+                    selector.close();
+                }
+                url(text) => {
+                    root.url(text);
+                }
+            }
+        }
+
+        Flickable {
+            VerticalLayout {
+                padding: t.gap;
+                spacing: t.gap;
+
+                property <[string]> key-titles: [
+                    "Row-1 Col-1",
+                    "Row-1 Col-2",
+                    "Row-1 Col-3",
+                    "Row-2 Col-1",
+                    "Row-2 Col-2",
+                    "Row-2 Col-3",
+                    "Row-3 Col-1",
+                    "Row-3 Col-2",
+                    "Row-3 Col-3",
+                    "Row-4 Col-1",
+                    "Row-4 Col-2",
+                    "Row-4 Col-3",
+                ];
+
+                for elem[i] in data.mapping: Rectangle {
+                    tc := TouchArea {
+                        clicked => {
+                            if conf-panel {
+                                selected-row = i;
+                                selector.show();
+                            }
+                        }
+                    }
+
+                    background: {
+                        if test-mode && i == active {
+                            #15ff006a
+                        } else if test-mode {
+                            #ff5e001c;
+                        } else if conf-panel && tc.has-hover {
+                            #ff440054
+                        } else if conf-panel {
+                            t.alt-bg
+                        } else {
+                            #ffffff1b
+                        }
+                    };
+
+                    border-radius: t.bor-r;
+                    border-width: 1px;
+                    border-color: {
+                        if test-mode && i == active {
+                            #00ff04
+                        } else if test-mode {
+                            transparent
+                        } else if conf-panel && tc.has-hover {
+                            #ff5900
+                        } else {
+                            t.bor-c;
+                        }
+                    }
+
+                    HorizontalLayout {
+                        alignment: space-between;
+                        padding-left: t.gap * 2;
+                        padding-right: t.gap * 2;
+                        padding: t.gap;
+
+                        Text {
+                            text: "Key " + i;
+                            font-size: 16px;
+                        }
+
+                        Text {
+                            text: {
+                                if data.mapping.length > i {
+                                    data.mapping[i]
+                                } else {
+                                    "Unset"
+                                }
+                            }
+                            font-size: 14px;
+                            font-weight: 800;
+                            color: {
+                                if data.mapping[i] != "Unset" {
+                                    #00ff08
+                                } else {
+                                    t.accent
+                                }
+                            }
+
+                            horizontal-alignment: right;
+                            vertical-alignment: center;
+                        }
+
+                        
+                    }
+
+                    
+                    
+                }
+
+                Rectangle { }
+            }
+        }
+    }
+}

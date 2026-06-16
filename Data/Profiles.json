@@ -1,0 +1,112 @@
+[
+  {
+    "info": {
+      "name": "Keypad",
+      "created": "2026-04-15",
+      "modified": "2026-04-15",
+      "enabled_keys": 11
+    },
+    "bindings": {
+      "5": "Num 5",
+      "1": "Num 1",
+      "10": "Unset",
+      "8": "Num 8",
+      "0": "Num 0",
+      "11": "Enter",
+      "7": "Num 7",
+      "3": "Num 3",
+      "2": "Num 2",
+      "9": "Num 9",
+      "4": "Num 4",
+      "6": "Num 6"
+    }
+  },
+  {
+    "info": {
+      "name": "Navigation",
+      "created": "2026-04-15",
+      "modified": "2023-04-15",
+      "enabled_keys": 7
+    },
+    "bindings": {
+      "7": "Down Arrow",
+      "0": "Tab Key",
+      "8": "Unset",
+      "11": "Enter",
+      "10": "Back Key",
+      "5": "Left Arrow",
+      "4": "Up Arrow",
+      "2": "Unset",
+      "3": "Unset",
+      "1": "Unset",
+      "9": "Unset",
+      "6": "Right Arrow"
+    }
+  },
+  {
+    "info": {
+      "name": "Media Control",
+      "created": "2026-04-15",
+      "modified": "2026-04-15",
+      "enabled_keys": 5
+    },
+    "bindings": {
+      "1": "Screen Record",
+      "3": "Unset",
+      "11": "Enter",
+      "2": "Camera",
+      "9": "Unset",
+      "4": "Volume +",
+      "7": "Mic Mute",
+      "10": "Unset",
+      "0": "Screenshot",
+      "8": "Unset",
+      "6": "Volume Mute",
+      "5": "Volume -"
+    }
+  },
+  {
+    "info": {
+      "name": "Shortcuts",
+      "created": "2026-04-15",
+      "modified": "2026-04-15",
+      "enabled_keys": 5
+    },
+    "bindings": {
+      "4": "Slint",
+      "9": "Unset",
+      "2": "Youtube",
+      "10": "Unset",
+      "7": "Unset",
+      "6": "Play",
+      "8": "Unset",
+      "11": "Enter",
+      "5": "BMW",
+      "1": "Leetcode",
+      "0": "Github",
+      "3": "Reddit"
+    }
+  },
+  {
+    "info": {
+      "name": "User Defined",
+      "created": "2026-04-15",
+      "modified": "2026-04-15",
+      "enabled_keys": 5
+    },
+    "bindings": {
+      "5": "Unset",
+      "10": "Unset",
+      "9": "Unset",
+      "4": "Unset",
+      "3": "Seek Backward",
+      "1": "Play",
+      "7": "Unset",
+      "6": "Unset",
+      "0": "Unset",
+      "2": "Unset",
+      "11": "Unset",
+      "8": "Unset"
+    }
+  }
+]

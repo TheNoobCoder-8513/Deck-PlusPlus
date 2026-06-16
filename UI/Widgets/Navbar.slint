@@ -1,0 +1,77 @@
+import { Theme as t } from "../Theme.slint";
+import { Button } from "Button.slint";
+import { Profile-data } from "../Datatypes.slint";
+
+export component Navbar inherits Rectangle {
+    border-width: 1px;
+    border-radius: t.bor-r;
+    border-color: t.bor-c;
+
+    background: t.alt-bg;
+
+    in property <[Profile-data]> list;
+    
+    // We keep 'selected' as an 'in' property so the parent (App) 
+    // can tell the Navbar which one is currently active.
+    in property <Profile-data> selected;
+
+    // This callback notifies the parent 'App' when a new profile is chosen
+    callback clicked(int);
+
+    VerticalLayout {
+        padding: t.gap;
+        spacing: t.gap;
+
+        // --- Header Section ---
+        VerticalLayout {
+            alignment: start;
+            vertical-stretch: 0;
+
+            HorizontalLayout {
+                padding: t.gap;
+                alignment: space-between;
+
+                HorizontalLayout {
+                    Text {
+                        text: "Deck";
+                        font-size: 24px;
+                        color: t.accent;
+                        vertical-alignment: center;
+                    }
+
+                    Text {
+                        text: "++";
+                        font-size: 22px;
+                        color: orange;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+
+            Rectangle {
+                height: 1px;
+                background: t.bor-c;
+            }
+        }
+
+        // --- Profile List Section ---
+        VerticalLayout {
+            spacing: t.gap;
+            for elem[i] in list: Button {
+                text: elem.info.name;
+                
+                // Use a more reliable check: compare the current element
+                // to the 'selected' property passed down from App.slint
+                selected: elem.info.name == root.selected.info.name;
+
+                clicked() => {
+                    // 1. Notify the parent of the index change
+                    root.clicked(i);
+                }
+            }
+
+            // This empty Rectangle pushes the buttons to the top
+            Rectangle { }
+        }
+    }
+}
